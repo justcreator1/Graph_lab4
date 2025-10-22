@@ -55,6 +55,27 @@ public:
         stream.write(reinterpret_cast<const char*>(pixels.data()), pixels.size() * sizeof(RGB));
         return true;
     }
+
+    bool Save_CanvasP3(const string& filepath)
+    {
+        ofstream stream(filepath, ios::binary);
+        if (!stream) {
+            cout << "не удалось создать файл" << endl;
+            return false;
+        }
+        stream << "P3\n" << width << " " << height << "\n255\n";
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                const RGB& pixel = pixels[i * width + j];
+                stream << static_cast<int>(pixel.r) << " "
+                    << static_cast<int>(pixel.g) << " "
+                    << static_cast<int>(pixel.b);
+                if (j < width - 1) stream << " ";
+            }
+            stream << "\n";
+        }
+    }
+
     void Brezenhem(Point start, Point end, RGB color)
     {
         double dx = (double)(end.x - start.x);
@@ -167,14 +188,14 @@ int main()
     Canvas1 eq(2*r1+20, 2 * r1 + 20);
     eq.Equation(10+r1, 10+r1, r1, { 0,0,0 });
     eq.Equation(10 + r1, 10 + r1, r2, { 0,0,0 });
-    eq.Save_Canvas("eq.ppm");
+    eq.Save_CanvasP3("eq.ppm");
     Canvas1 prm(2 * r1 + 20, 2 * r1 + 20);
     prm.Parametric(10 + r1, 10 + r1, r1, { 0,0,0 });
     prm.Parametric(10 + r1, 10 + r1, r2, { 0,0,0 });
-    prm.Save_Canvas("prm.ppm");
+    prm.Save_CanvasP3("prm.ppm");
     Canvas1 bre(2 * r1 + 20, 2 * r1 + 20);
     bre.Bresenham(10 + r1, 10 + r1, r1, { 0,0,0 });
     bre.Bresenham(10 + r1, 10 + r1, r2, { 0,0,0 });
-    bre.Save_Canvas("bre.ppm");
+    bre.Save_CanvasP3("bre.ppm");
 }
 
